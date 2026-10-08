@@ -71,6 +71,7 @@ export interface PatientProfile {
   knownAllergies: string[];
   currentMedications: string[];
   chronicConditions?: string[];
+  activeSymptoms?: string[];
   healthGoals?: string[];
   emergencyContactName?: string;
   emergencyContactPhone?: string;
@@ -369,6 +370,7 @@ export interface SuggestedTreatmentPlan {
   followUpTimeline: string;
   generatedAt: string;
   modelUsed?: string;
+  symptomImageUrl?: string;
 }
 
 // ==========================================

@@ -13,6 +13,12 @@ import { AIChatbotTab } from './components/tabs/AIChatbotTab';
 import { HealthRecordsTab } from './components/tabs/HealthRecordsTab';
 import { AdminPortalTab } from './components/tabs/AdminPortalTab';
 import { ProjectExplorerTab } from './components/tabs/ProjectExplorerTab';
+import { DoctorPatientsTab } from './components/tabs/DoctorPatientsTab';
+import { DoctorAppointmentsTab } from './components/tabs/DoctorAppointmentsTab';
+import { DoctorPrescriptionsTab } from './components/tabs/DoctorPrescriptionsTab';
+import { DoctorTrendsTab } from './components/tabs/DoctorTrendsTab';
+import { DoctorLabsTab } from './components/tabs/DoctorLabsTab';
+import { DoctorProfileTab } from './components/tabs/DoctorProfileTab';
 import { EmergencyModal } from './components/EmergencyModal';
 import { PredictionResultModal } from './components/tabs/PredictionResultModal';
 import {
@@ -23,9 +29,29 @@ import {
   PrescriptionScanResult,
   UserRecord
 } from './types';
+import {
+  Calendar,
+  Users,
+  Stethoscope,
+  Pill,
+  TrendingUp,
+  Bot,
+  FlaskConical,
+  User as UserIcon
+} from 'lucide-react';
 import { storageService } from './services/storageService';
 import { notificationService } from './services/notificationService';
 import { LiveDoctorAlertToast } from './components/notifications/LiveDoctorAlertToast';
+
+const PlaceholderDoctorTab = ({ title, icon: Icon }: { title: string, icon: any }) => (
+  <div className="bg-white rounded-3xl border border-blue-200 shadow-sm p-12 text-center flex flex-col items-center justify-center min-h-[60vh] animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-20 h-20 rounded-3xl bg-linear-to-tr from-blue-500 to-indigo-600 flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30">
+      <Icon className="w-10 h-10 text-white" />
+    </div>
+    <h2 className="text-3xl font-black text-slate-800 mb-3">{title}</h2>
+    <p className="text-slate-500 max-w-md mx-auto text-lg">This module is currently in active development. Check back soon for the next release.</p>
+  </div>
+);
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<UserRecord>(() => storageService.getUserProfile());
@@ -311,7 +337,7 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'doctor-portal' && (
+        {(activeTab === 'doctor-portal' || activeTab === 'doc-consultations') && (
           <DoctorPortalTab
             currentUser={currentUser}
             predictions={predictions}
@@ -413,6 +439,20 @@ export default function App() {
             onNavigateToDoctorPortal={() => setActiveTab('doctor-portal')}
           />
         )}
+
+        {/* Doctor Portal Modules (Finished) */}
+        {activeTab === 'doc-appointments' && <DoctorAppointmentsTab />}
+        {activeTab === 'doc-patients' && <DoctorPatientsTab predictions={predictions} />}
+        {activeTab === 'doc-prescriptions' && <DoctorPrescriptionsTab prescriptions={prescriptions} />}
+        {activeTab === 'doc-trends' && <DoctorTrendsTab />}
+        {activeTab === 'doc-ai' && (
+          <AIChatbotTab
+            setActiveTab={setActiveTab}
+            onCheckDiseaseSymptoms={handleQuickCheck}
+          />
+        )}
+        {activeTab === 'doc-labs' && <DoctorLabsTab />}
+        {activeTab === 'doc-profile' && <DoctorProfileTab currentUser={currentUser} />}
 
         {activeTab === 'admin-portal' && (
           <AdminPortalTab currentUser={currentUser} />

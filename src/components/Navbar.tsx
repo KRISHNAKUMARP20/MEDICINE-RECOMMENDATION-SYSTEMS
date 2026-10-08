@@ -23,8 +23,12 @@ import {
   Stethoscope,
   User,
   Users,
-  Video
+  Video,
+  Calendar,
+  TrendingUp,
+  FlaskConical
 } from 'lucide-react';
+import { NavDropdown } from './NavDropdown';
 import { DoctorNotification, UserRecord } from '../types';
 import { DoctorNotificationCenter } from './notifications/DoctorNotificationCenter';
 import { PatientLoginModal } from './modals/PatientLoginModal';
@@ -42,7 +46,15 @@ export type ActiveTab =
   | 'ai-chatbot'
   | 'health-records'
   | 'admin-portal'
-  | 'project-explorer';
+  | 'project-explorer'
+  | 'doc-appointments'
+  | 'doc-patients'
+  | 'doc-consultations'
+  | 'doc-prescriptions'
+  | 'doc-trends'
+  | 'doc-ai'
+  | 'doc-labs'
+  | 'doc-profile';
 
 export type ThemeColor = 'doctor-blue' | 'teal' | 'indigo' | 'slate';
 
@@ -227,84 +239,130 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Primary Navigation Items */}
           {activeTab !== 'home' && (
             <nav className="hidden lg:flex items-center gap-1 text-sm font-medium">
-              {/* Dedicated Doctor Tab */}
-              {isDoctor && (
-                <button
-                  onClick={() => setActiveTab('doctor-portal')}
-                  className={`px-3 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer ${
-                    activeTab === 'doctor-portal'
-                      ? 'bg-blue-600 text-white shadow-md shadow-blue-600/25 font-bold'
-                      : 'bg-blue-50 text-blue-900 border border-blue-200 hover:bg-blue-100 font-semibold'
-                  }`}
-                >
-                  <Stethoscope className="w-4 h-4" />
-                  <span>Doctor Consults & Rx</span>
-                </button>
+              {isDoctor ? (
+                <>
+                  <button
+                    onClick={() => setActiveTab('doctor-portal')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('doctor-portal')}`}
+                  >
+                    <Activity className="w-4 h-4" />
+                    <span>Dashboard</span>
+                  </button>
+
+                  <NavDropdown title="Appointments" icon={Calendar} items={[
+                    {label: 'Calendar', onClick: () => setActiveTab('doc-appointments')},
+                    {label: 'Today\'s Appointments', onClick: () => setActiveTab('doc-appointments')},
+                    {label: 'Appointment History', onClick: () => setActiveTab('doc-appointments')}
+                  ]} />
+                  <NavDropdown title="My Patients" icon={Users} items={[
+                    {label: 'All Patients', onClick: () => setActiveTab('doc-patients')},
+                    {label: 'Active Patients', onClick: () => setActiveTab('doc-patients')},
+                    {label: 'Follow-ups', onClick: () => setActiveTab('doc-patients')}
+                  ]} />
+                  <NavDropdown title="Consultations" icon={Stethoscope} items={[
+                    {label: 'New Consultation', onClick: () => setActiveTab('doc-consultations')},
+                    {label: 'Consultation History', onClick: () => setActiveTab('doc-consultations')}
+                  ]} />
+                  <NavDropdown title="Prescriptions" icon={Pill} items={[
+                    {label: 'Create Prescription', onClick: () => setActiveTab('doc-prescriptions')},
+                    {label: 'Prescription History', onClick: () => setActiveTab('doc-prescriptions')}
+                  ]} />
+
+                  <button onClick={() => setActiveTab('doc-trends')} className="px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 font-medium cursor-pointer">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="whitespace-nowrap">Health Trends</span>
+                  </button>
+                  <button onClick={() => setActiveTab('doc-ai')} className="px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 font-medium cursor-pointer">
+                    <Bot className="w-4 h-4" />
+                    <span className="whitespace-nowrap">AI Assistant</span>
+                  </button>
+                  <button onClick={() => setActiveTab('doc-labs')} className="px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 text-slate-600 hover:text-slate-950 hover:bg-slate-100/80 font-medium cursor-pointer">
+                    <FlaskConical className="w-4 h-4" />
+                    <span className="whitespace-nowrap">Lab Reports</span>
+                  </button>
+                  <NavDropdown title="Doctor Profile" icon={User} items={[
+                    {label: 'Personal Details', onClick: () => setActiveTab('doc-profile')},
+                    {label: 'Availability', onClick: () => setActiveTab('doc-profile')},
+                    {label: 'Settings', onClick: () => setActiveTab('doc-profile')}
+                  ]} />
+                </>
+              ) : isAdmin ? (
+                <>
+                  <button
+                    onClick={() => setActiveTab('admin-portal')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('admin-portal')}`}
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>System Monitor</span>
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => setActiveTab('dashboard')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('dashboard')}`}
+                  >
+                    <Activity className="w-4 h-4" />
+                    <span>Dashboard</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('symptom-checker')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('symptom-checker')}`}
+                  >
+                    <HeartPulse className="w-4 h-4" />
+                    <span>Symptom Checker</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('prescription-ocr')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('prescription-ocr')}`}
+                  >
+                    <Scan className="w-4 h-4" />
+                    <span>Prescription OCR</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('animate-video')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('animate-video')}`}
+                  >
+                    <Video className="w-4 h-4 text-teal-600" />
+                    <span>Animate to Video (Veo)</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('medicines')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('medicines')}`}
+                  >
+                    <Pill className="w-4 h-4" />
+                    <span>Medicines & Interactions</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('ml-studio')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('ml-studio')}`}
+                  >
+                    <BrainCircuit className="w-4 h-4" />
+                    <span>ML Models (97%)</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('ai-chatbot')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('ai-chatbot')}`}
+                  >
+                    <Bot className="w-4 h-4" />
+                    <span>AI Chatbot</span>
+                  </button>
+
+                  <button
+                    onClick={() => setActiveTab('project-explorer')}
+                    className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('project-explorer')}`}
+                  >
+                    <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+                    <span>Kaggle Datasets</span>
+                  </button>
+                </>
               )}
-
-              <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('dashboard')}`}
-              >
-                <Activity className="w-4 h-4" />
-                <span>Dashboard</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('symptom-checker')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('symptom-checker')}`}
-              >
-                <HeartPulse className="w-4 h-4" />
-                <span>Symptom Checker</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('prescription-ocr')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('prescription-ocr')}`}
-              >
-                <Scan className="w-4 h-4" />
-                <span>Prescription OCR</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('animate-video')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('animate-video')}`}
-              >
-                <Video className="w-4 h-4 text-teal-600" />
-                <span>Animate to Video (Veo)</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('medicines')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('medicines')}`}
-              >
-                <Pill className="w-4 h-4" />
-                <span>Medicines & Interactions</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('ml-studio')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('ml-studio')}`}
-              >
-                <BrainCircuit className="w-4 h-4" />
-                <span>ML Models (97%)</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('ai-chatbot')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('ai-chatbot')}`}
-              >
-                <Bot className="w-4 h-4" />
-                <span>AI Chatbot</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab('project-explorer')}
-                className={`px-3 py-2 rounded-lg transition-colors flex items-center gap-1.5 ${getActiveTabClass('project-explorer')}`}
-              >
-                <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-                <span>Kaggle Datasets</span>
-              </button>
             </nav>
           )}
 
@@ -332,11 +390,11 @@ export const Navbar: React.FC<NavbarProps> = ({
 
               {isDoctor && (
                 <button
-                  onClick={() => setActiveTab('doctor-portal')}
-                  className="hidden md:flex px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs items-center gap-1.5 shadow-sm shadow-blue-500/20 cursor-pointer"
+                  onClick={triggerEmergency}
+                  className="hidden md:flex px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs items-center gap-1.5 shadow-sm shadow-rose-500/20 cursor-pointer"
                 >
-                  <Stethoscope className="w-3.5 h-3.5" />
-                  <span>Doctor Workstation</span>
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  <span>Emergency Alerts</span>
                 </button>
               )}
 
@@ -444,71 +502,81 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Sub-navigation bar for mobile/tablets */}
       {activeTab !== 'home' && (
         <div className="lg:hidden flex items-center gap-2 overflow-x-auto px-4 py-2 bg-slate-50 border-t border-slate-200 text-xs no-scrollbar">
-          {isDoctor && (
-            <button
-              onClick={() => setActiveTab('doctor-portal')}
-              className={`px-3 py-1.5 rounded-md shrink-0 font-bold flex items-center gap-1 ${
-                activeTab === 'doctor-portal' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-900 font-bold'
-              }`}
-            >
-              <Stethoscope className="w-3.5 h-3.5" />
-              <span>Doctor Consults & Rx</span>
-            </button>
+          {isDoctor ? (
+            <>
+              <button
+                onClick={() => setActiveTab('doctor-portal')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'doctor-portal' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Dashboard
+              </button>
+              <button onClick={() => setActiveTab('doc-appointments')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">Appointments</button>
+              <button onClick={() => setActiveTab('doc-patients')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">My Patients</button>
+              <button onClick={() => setActiveTab('doc-consultations')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">Consultations</button>
+              <button onClick={() => setActiveTab('doc-prescriptions')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">Prescriptions</button>
+              <button onClick={() => setActiveTab('doc-trends')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">Health Trends</button>
+              <button onClick={() => setActiveTab('doc-ai')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">AI Assistant</button>
+              <button onClick={() => setActiveTab('doc-labs')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">Lab Reports</button>
+              <button onClick={() => setActiveTab('doc-profile')} className="px-2.5 py-1.5 rounded-md shrink-0 font-medium text-slate-600">Doctor Profile</button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Dashboard
+              </button>
+              <button
+                onClick={() => setActiveTab('symptom-checker')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'symptom-checker' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Symptom Checker
+              </button>
+              <button
+                onClick={() => setActiveTab('prescription-ocr')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'prescription-ocr' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Prescription OCR
+              </button>
+              <button
+                onClick={() => setActiveTab('medicines')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'medicines' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Medicines
+              </button>
+              <button
+                onClick={() => setActiveTab('diseases')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'diseases' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Diseases
+              </button>
+              <button
+                onClick={() => setActiveTab('ml-studio')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'ml-studio' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                ML Studio
+              </button>
+              <button
+                onClick={() => setActiveTab('ai-chatbot')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'ai-chatbot' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                AI Chatbot
+              </button>
+              <button
+                onClick={() => setActiveTab('project-explorer')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'project-explorer' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Kaggle Datasets
+              </button>
+              <button
+                onClick={() => setActiveTab('health-records')}
+                className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'health-records' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
+              >
+                Records & Profile
+              </button>
+            </>
           )}
-          <button
-            onClick={() => setActiveTab('dashboard')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => setActiveTab('symptom-checker')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'symptom-checker' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Symptom Checker
-          </button>
-          <button
-            onClick={() => setActiveTab('prescription-ocr')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'prescription-ocr' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Prescription OCR
-          </button>
-          <button
-            onClick={() => setActiveTab('medicines')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'medicines' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Medicines
-          </button>
-          <button
-            onClick={() => setActiveTab('diseases')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'diseases' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Diseases
-          </button>
-          <button
-            onClick={() => setActiveTab('ml-studio')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'ml-studio' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            ML Studio
-          </button>
-          <button
-            onClick={() => setActiveTab('ai-chatbot')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'ai-chatbot' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            AI Chatbot
-          </button>
-          <button
-            onClick={() => setActiveTab('project-explorer')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'project-explorer' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Kaggle Datasets
-          </button>
-          <button
-            onClick={() => setActiveTab('health-records')}
-            className={`px-2.5 py-1.5 rounded-md shrink-0 font-medium ${activeTab === 'health-records' ? 'bg-blue-600 text-white' : 'text-slate-600'}`}
-          >
-            Records & Profile
-          </button>
           {isAdmin && (
             <button
               onClick={() => setActiveTab('admin-portal')}

@@ -12,6 +12,7 @@ import {
   Plus,
   RotateCcw,
   Search,
+  Camera,
   ShieldAlert,
   ShieldCheck,
   Sparkles,
@@ -129,6 +130,18 @@ export const SymptomCheckerTab: React.FC<SymptomCheckerTabProps> = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [symptomImage, setSymptomImage] = useState<string | null>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSymptomImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Vitals State for Triage Assessment
   const [currentVitals, setCurrentVitals] = useState<VitalsInputContext>(() => {
@@ -296,6 +309,7 @@ export const SymptomCheckerTab: React.FC<SymptomCheckerTabProps> = ({
 
   const clearAllSymptoms = () => {
     setSelectedSymptoms([]);
+    setSymptomImage(null);
     setErrorMsg(null);
   };
 
@@ -338,6 +352,7 @@ export const SymptomCheckerTab: React.FC<SymptomCheckerTabProps> = ({
           patientGender,
           safetyAudit: safetyReport,
           triageAssessment,
+          symptomImageUrl: symptomImage || undefined,
           doctorOrder: undefined // Transmitted to Doctor consultation queue!
         };
         setPredictionResult(enrichedResult);
@@ -590,6 +605,46 @@ export const SymptomCheckerTab: React.FC<SymptomCheckerTabProps> = ({
             >
               Speak Now →
             </button>
+          </div>
+
+          {/* Image Upload Hint */}
+          <div className="mb-4 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-600 gap-2">
+            <div className="flex items-center gap-2 truncate">
+              <label htmlFor="symptom-image-upload" className="w-5 h-5 rounded-md bg-blue-600 text-white flex items-center justify-center shrink-0 cursor-pointer">
+                <Camera className="w-3 h-3" />
+              </label>
+              <span className="truncate text-[11px] sm:text-xs">
+                Upload a photo (e.g. rash, swelling) for doctor review
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="file"
+                id="symptom-image-upload"
+                accept="image/*"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              <label 
+                htmlFor="symptom-image-upload"
+                className="text-blue-700 hover:text-blue-900 font-bold text-[11px] shrink-0 cursor-pointer hover:underline"
+              >
+                Choose Photo
+              </label>
+              {symptomImage && (
+                <button 
+                  onClick={() => setSymptomImage(null)}
+                  className="text-red-500 hover:text-red-700 text-[11px] font-bold shrink-0 hover:underline"
+                >
+                  Clear Photo
+                </button>
+              )}
+            </div>
+            {symptomImage && (
+              <div className="w-10 h-10 shrink-0 border border-slate-200 rounded-md overflow-hidden ml-2 hidden sm:block">
+                <img src={symptomImage} alt="Uploaded symptom" className="w-full h-full object-cover" />
+              </div>
+            )}
           </div>
 
           {/* Category Tabs */}

@@ -76,6 +76,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
   const [passwordInput, setPasswordInput] = useState('••••••••••••');
   const [customName, setCustomName] = useState('Alex Johnson');
   const [ageInput, setAgeInput] = useState('38');
+  const [symptomsInput, setSymptomsInput] = useState('');
   const [loginSuccessMessage, setLoginSuccessMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeWorkflowStep, setActiveWorkflowStep] = useState<number>(1);
@@ -169,7 +170,8 @@ export const HomeTab: React.FC<HomeTabProps> = ({
         profile: selectedFormRole === 'patient' ? {
           ...currentUser.profile,
           name: userName,
-          age: parseInt(ageInput, 10) || 38
+          age: parseInt(ageInput, 10) || 38,
+          activeSymptoms: symptomsInput ? symptomsInput.split(',').map(s => s.trim()) : []
         } : currentUser.profile
       };
 
@@ -202,6 +204,7 @@ export const HomeTab: React.FC<HomeTabProps> = ({
       setCustomName('Alex Johnson');
       setEmailInput('alex.johnson@health.org');
       setAgeInput('38');
+      setSymptomsInput('');
     } else if (role === 'doctor') {
       setCustomName('Dr. Sarah Mitchell, MD');
       setEmailInput('dr.mitchell@hospital.org');
@@ -432,6 +435,16 @@ export const HomeTab: React.FC<HomeTabProps> = ({
                           required
                           value={ageInput}
                           onChange={(e) => setAgeInput(e.target.value)}
+                          className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-teal-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-700 mb-1">Current Symptoms (comma separated)</label>
+                        <input
+                          type="text"
+                          placeholder="e.g., headache, fever"
+                          value={symptomsInput}
+                          onChange={(e) => setSymptomsInput(e.target.value)}
                           className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-teal-500"
                         />
                       </div>

@@ -905,6 +905,22 @@ export const DoctorPortalTab: React.FC<DoctorPortalTabProps> = ({
                     ))}
                   </div>
 
+                  {/* Uploaded Symptom Image */}
+                  {selectedCase.symptomImageUrl && (
+                    <div className="mt-3 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+                        Patient Uploaded Photo
+                      </h4>
+                      <div className="relative rounded-lg overflow-hidden border border-slate-200 w-full max-w-sm">
+                        <img 
+                          src={selectedCase.symptomImageUrl} 
+                          alt="Patient uploaded symptom" 
+                          className="w-full h-auto object-cover"
+                        />
+                      </div>
+                    </div>
+                  )}
+
                   {/* Red flags if present */}
                   {selectedCase.redFlagWarnings && selectedCase.redFlagWarnings.length > 0 && (
                     <div className="mt-3 p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs">
